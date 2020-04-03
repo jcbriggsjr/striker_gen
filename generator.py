@@ -31,7 +31,7 @@ machines = { 'Bruce':{'s1p1':[-16.359,-7.875],'s2p1':[-10.816,-7.877],'s3p1':[-5
                          's1p2':[-16.326,-7.865],'s2p2':[-10.833,-7.866], 's3p2':[-5.339,-7.870],
                         'table_z':6.459},
             'LittleBro':{'s2p1':[0,0],'s1p1':[0,0],'s3p1':[0,0]}}
-path = ''
+path = 'G:\\3 - Production Departments\\4 - Grinding\\0 - Department Documents\\4 - Programs & Software\\1 - Operating Software\\striker_gen\\'
 backleft = path + 'glass_probe_backleft_template.txt'
 backright = path + 'glass_probe_backright_template.txt'
 frontleft = path + 'glass_probe_frontleft_template.txt'
@@ -176,10 +176,10 @@ def stationStrike(machine, pallet_number, station_number, X_dim, Y_dim, offset_x
 def modifyStrikeBase(num_passes, path_len, station_number, X, Y, orientation):
     
     if orientation == 'Horizontal':
-        with open('strike_one_horizontal.txt', 'r') as file:
+        with open(path + 'strike_one_horizontal.txt', 'r') as file:
             code = file.read()        
     elif orientation == 'Vertical':
-        with open('strike_one_vertical.txt', 'r') as file:
+        with open(path + 'strike_one_vertical.txt', 'r') as file:
             code = file.read()        
         
     m_code = code
@@ -230,10 +230,10 @@ def addStrikeProbing(X_dim, Y_dim, machine, pallet_number, stations, orientation
     # with the exception of travel direction and z probe
     # position assignment
     if orientation == 'Horizontal':        
-        with open('strikeprobe_y_template.txt', 'r') as file1:
+        with open(path + 'strikeprobe_y_template.txt', 'r') as file1:
             templatexy = file1.read()
     else:
-        with open('strikeprobe_x_template.txt', 'r') as file1:
+        with open(path + 'strikeprobe_x_template.txt', 'r') as file1:
             templatexy = file1.read()
     # strikeprobe_xy only needs to be called once for a given
     # fixture setup. All fixtures on the same setup
@@ -274,7 +274,7 @@ def modify_z_code(s):
     # the only modification to the z template is the station number entry. 
     # the rest of the data needed is obtained and set by the xy template
     # and stored in the machine at runtime
-    with open('strikeprobe_z_template.txt', 'r') as file:
+    with open(path + 'strikeprobe_z_template.txt', 'r') as file:
         template_z = file.read()
         
     strikeprobe_z = template_z.replace("#104 = 10", "#104 = 1" + str(s))
@@ -385,7 +385,7 @@ def getPartData(selections):
     
     
     # read sql database login info from file 
-    with open('sql_access.txt', 'r') as file:
+    with open(path + 'sql_access.txt', 'r') as file:
         access = file.readlines()    
 
     # create db connection
