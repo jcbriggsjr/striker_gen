@@ -1,0 +1,81 @@
+G54.1 Pn
+n = 1 Station 1 Pallet 1 Glass WCS
+n = 2 Station 2 Pallet 1 Glass WCS
+n = 3 Station 3 Pallet 1 Glass WCS
+n = 4 Station 1 Pallet 2 Glass WCS
+n = 5 Station 2 Pallet 2 Glass WCS
+n = 6 Station 3 Pallet 2 Glass WCS
+
+n = 11 Station 1 Pallet 1 Fixture Back Left Corner and Rubber Height WCS
+n = 12 Station 2 Pallet 1 Fixture Back Left Corner and Rubber Height WCS
+n = 13 Station 3 Pallet 1 Fixture Back Left Corner and Rubber Height WCS
+n = 14 Station 1 Pallet 2 Fixture Back Left Corner and Rubber Height WCS
+n = 15 Station 2 Pallet 2 Fixture Back Left Corner and Rubber Height WCS
+n = 16 Station 3 Pallet 2 Fixture Back Left Corner and Rubber Height WCS
+
+n = 21 Station 1 Pallet 1 Vacuum Hole Center and Table Height WCS
+n = 22 Station 2 Pallet 1 Vacuum Hole Center and Table Height WCS
+n = 23 Station 3 Pallet 1 Vacuum Hole Center and Table Height WCS
+n = 24 Station 1 Pallet 2 Vacuum Hole Center and Table Height WCS
+n = 25 Station 2 Pallet 2 Vacuum Hole Center and Table Height WCS
+n = 26 Station 3 Pallet 2 Vacuum Hole Center and Table Height WCS
+
+#100 tracks striking passes in XY plane
+#101 tracks number of passes in XY plane completed
+#102 tracks whether striking program has probed fixtures already
+#103 sets station number for vacuum
+#104 sets station number for fixture
+#105 tracks whether striking program has probed Z already for pallet 1
+#106 tracks whether striking program has probed Z already for pallet 2
+#107 sets number of Z passes
+#108 tracks number of Z passes from striker
+
+#500 tracks pass position for passes in XY plane
+#501 sets pass length in XY plane
+#521 sets probe X start
+#522 sets probe Y start
+#523 sets probe Z for finding fixture corner 
+#524 sets probe Z start for finding fixture corner
+#525 sets probe Z minimum height
+#526 sets probe Z start and return height for rubber
+#527 sets probe X limit
+#528 sets probe Y limit
+#529 sets station vacuum WCS X
+#530 sets station vacuum WCS Y 
+#531 sets station vacuum WCS Z
+#532 sets found X
+#533 sets found Y
+#534 sets found Z for rubber
+#535 
+#536
+#538 sets X difference between probed point and vacuum center
+#539 sets Y difference between probed point and vacuum center
+#540 sets X for probing Z rubber
+#541 sets Y for probing Z rubber
+
+#600 sets skew angle
+#621 sets theoretical glass X for glass corner
+#622 sets theoretical glass Y for glass corner
+#623 sets probe Z for finding glass corner
+#624 sets probe Z start and return for glass corner
+#625 sets minimum probe Z limit for glass top
+#626 sets probe Z start and return for glass top
+#627 sets probe X limit
+#628 sets probe Y limit
+#632 stores glass probed X
+#633 stores glass probed Y
+#634 stores glass probed Z
+#635 sets probe X point while probing Y
+#636 sets probe Y point while probing X
+#637 sets probe X start point for probing X
+#638 sets probe Y start point for probing Y
+#642 sets manual entry X offset from probe corner
+#643 sets manual entry Y offset from probe corner
+#644 sets half glass thickness
+#645 sets difference of x probe and station center
+#646 sets difference of y probe and station center
+#647 sets x to check skew
+#648 stores found y for calculating skew
+#649 stores found x for calculating skew
+#650 sets z to check skew
+#651 calculates and stores skew
