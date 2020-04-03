@@ -36,13 +36,13 @@ backleft = path + 'glass_probe_backleft_template.txt'
 backright = path + 'glass_probe_backright_template.txt'
 frontleft = path + 'glass_probe_frontleft_template.txt'
 frontright = path + 'glass_probe_frontright_template.txt'
-center = path + 'center'
+center = path + 'glass_probe_center_template.txt'
 
 direction = {'Back Left':[-1,1,backleft],
                         'Back Right':[1,1,backright],
                         'Front Left':[-1,-1,frontleft],
                         'Front Right':[1,-1,frontright],
-                        'Center':[0,0,center]}
+                        'Center':[-1,1,center]}
 
 def rreplace(s, old, new, occurrence):
     li = s.rsplit(old, occurrence)    
@@ -103,13 +103,8 @@ def create_strike_probe(selections):
         X_dim = length
         Y_dim = width
         
-    if probe_corner != 'Center':
-        mod_X_dim, mod_Y_dim, probepath = setGlassCorner(X_dim, Y_dim, probe_corner)        
-    else:
-        print('this is unique')
-        mod_X_dim, mod_Y_dim = 0,0
-        offset_x = [0.75, -0.75]
-        offset_y = [0.75, -0.75]    
+    
+    mod_X_dim, mod_Y_dim, probepath = setGlassCorner(X_dim, Y_dim, probe_corner)            
     
     for palnum in pallet:        
         if s_or_p == 'Striking':
@@ -117,7 +112,7 @@ def create_strike_probe(selections):
             
         elif s_or_p == 'Probing':
             offset_x, offset_y = modifyOffsets(probe_corner)
-            createPalletProbe(cust_name, cust_part_num, jobnum, palnum, stations, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check)
+            createPalletProbe(cust_name, cust_part_num, jobnum, palnum, stations, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner)
     #return 'Success'    
     
         
@@ -224,7 +219,7 @@ def addStrikeProbing(X_dim, Y_dim, machine, pallet_number, stations, orientation
     probe_y = round(vac_y + Y_dim,3)
     
     # station number between 1-6, can use for #103 and #104
-    stnum_1to6 = s_list[0] + (3*(int(pallet_number)-1))   
+    stnum_1to6 = s_list[0] + (3*(int(pallet_number)-1))
     # loading modified data into a list for simpler data transfer
     # into modifier function
     xy_data = [vac_x,vac_y,vac_z,probe_x,probe_y,stnum_1to6]
@@ -287,15 +282,15 @@ def modify_z_code(s):
 
 
     
-def createPalletProbe(cust_name, cust_part_num, jobnum, palnum, stations, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check):      
+def createPalletProbe(cust_name, cust_part_num, jobnum, palnum, stations, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner):
     probing_program = ''
-    probe_list = [createStationProbe(palnum, station_number, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check) for station_number,station in enumerate(stations, start=1) if station]
+    probe_list = [createStationProbe(palnum, station_number, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner) for station_number,station in enumerate(stations, start=1) if station]
     for partial in probe_list:
         probing_program = probing_program + partial
     probing_program = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' PROBING)\n'+ 'G100 T99\nM404\n' + probing_program + '\nM404\nM30\n'
     saveProbingProgram(jobnum, palnum, probing_program)
     
-def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check):
+def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner):
     sp = 's' + str(station_number) + 'p' + str(pallet_number)
     st_num = station_number + (int(pallet_number)-1)*3
     wcs = machines[machine][sp]
@@ -346,6 +341,17 @@ def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_
     template = template.replace("#625 = #0", "#625 = #" + rubber_height_var)
     # set half glass thickness
     template = template.replace("#644 = 0","#644 = " + str(half_glass_thick))
+    
+    if probe_corner == 'Center':
+        # set X,Y points for front and right edges of part
+        front_right = []
+        front_right.append(round(wcs[0] - mod_X_dim,3))
+        front_right.append(round(wcs[1] - mod_Y_dim,3))
+        
+        # set theoretical glass edge right
+        template = template.replace("#661 = 0", "#661 = " + str(front_right[0]))
+        # set theoretical glass edge front
+        template = template.replace("#664 = 0", "#664 = " + str(front_right[1]))
     
     if skew_check[0]:
         skew_file = path + skew_check[1].lower() + '_skew_template.txt'
@@ -408,4 +414,4 @@ def getPartData(selections):
 
 
 if __name__ == "__main__":    
-    print("banana")
+    print('hi')
