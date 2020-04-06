@@ -78,4 +78,19 @@ n = 26 Station 3 Pallet 2 Vacuum Hole Center and Table Height WCS
 #648 stores found y for calculating skew
 #649 stores found x for calculating skew
 #650 sets z to check skew
-#651 calculates and stores skew
+#651 calculates ratio of probe dim / long dim
+#652 calculates skew with ATAN
+#661 sets theoretical glass edge on X right
+#662 sets probe x start point for probing x right
+#663 sets probe x right limit
+#664 sets theoretical glass edge on Y front
+#665 sets probe y start point for probing y front
+#666 sets probe y front limit
+#667 sets found x right
+#668 stores found y front
+#701 stores station 1 skew angle
+#702 stores station 2 skew angle
+#703 stores station 3 skew angle
+#704 stores station 4 skew angle
+#705 stores station 5 skew angle
+#706 stores station 6 skew angle

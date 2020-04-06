@@ -10,6 +10,7 @@ strikeprobe_y_template.txt
 strikeprobe_x_template.txt
 strikeprobe_z_template.txt
 sql_access.txt
+VMC variables used.txt
 open_ui.py
 generator.py
 Probe_UI.ui
