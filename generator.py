@@ -244,7 +244,11 @@ def addStrikeProbing(X_dim, Y_dim, machine, pallet_number, stations, orientation
     strikeprobe_z = ''
     # for each station in the setup, probe the z height of the rubber
     for s in s_list:
-        strikeprobe_z = strikeprobe_z + modify_z_code(s,xy_data)
+        stnum_1to6 = s  + (3*(int(pallet_number)-1))
+        pallet_station = 's' + str(s) + 'p' + str(pallet_number)
+        vac_x = round(machines[machine][pallet_station][0],3)
+        vac_y = round(machines[machine][pallet_station][1],3) 
+        strikeprobe_z = strikeprobe_z + modify_z_code(stnum_1to6,vac_x, vac_y)
     # need to put all the code together and add M30 to end it
     
     strikeprobe_code = strikeprobe_xy + strikeprobe_z
@@ -270,16 +274,16 @@ def modify_xy_code(templatexy,xy_data):
     
     return strikeprobe_xy        
 
-def modify_z_code(s,xy_data):
+def modify_z_code(s,vac_x,vac_y):
     # the only modification to the z template is the station number entry. 
     # the rest of the data needed is obtained and set by the xy template
     # and stored in the machine at runtime
     with open(path + 'strikeprobe_z_template.txt', 'r') as file:
         template_z = file.read()
-        
-    strikeprobe_z = template_z.replace("#104 = 10", "#104 = 1" + str(s))
-    strikeprobe_z = template_z.replace("#529 = 0", "#529 = " + str(xy_data[0]))
-    strikeprobe_z = template_z.replace("#530 = 0", "#530 = " + str(xy_data[1]))
+    strikeprobe_z = template_z
+    strikeprobe_z = strikeprobe_z.replace("#104 = 0", "#104 = 1" + str(s))
+    strikeprobe_z = strikeprobe_z.replace("#529 = 0", "#529 = " + str(vac_x))
+    strikeprobe_z = strikeprobe_z.replace("#530 = 0", "#530 = " + str(vac_y))    
     return strikeprobe_z
 
 
