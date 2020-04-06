@@ -15,7 +15,8 @@ class MainWindow(QtWidgets.QMainWindow):
     
     def __init__(self):
         super().__init__()
-        uic.loadUi("Probe_UI.ui", self)
+        path = "G://3 - Production Departments//4 - Grinding//0 - Department Documents//4 - Programs & Software//1 - Operating Software//striker_gen//"
+        uic.loadUi(path + "Probe_UI.ui", self)
         
         self.striking_pushbutton.clicked.connect(self.createStriking)        
         self.probing_pushbutton.clicked.connect(self.createProbing)        
@@ -85,32 +86,34 @@ class MainWindow(QtWidgets.QMainWindow):
         # action to take when Create Striking button is pressed
         selections = self.getSelections()
         selections.append("Striking")
-        generator.create_strike_probe(selections)
+        
         report = ['createStriking']
         for e in selections:
             report.append(e)
         
         if report[1] != 'None':
             self.showDialog(report)
+            generator.create_strike_probe(selections)
         pass
     
     def createProbing(self):
         # action to take when Create Probing button is pressed
         selections = self.getSelections()
         selections.append("Probing")
-        generator.create_strike_probe(selections)
+        
         report = ['createProbing']
         for e in selections:
             report.append(e)            
         
         if report[1] != 'None':
             self.showDialog(report)
+            generator.create_strike_probe(selections)
         pass
     
     def checkJob(self, jobnum):
         jobnum = "'" + jobnum.upper() + "'"
-        
-        with open('sql_access.txt', 'r') as file:
+        path = "G://3 - Production Departments//4 - Grinding//0 - Department Documents//4 - Programs & Software//1 - Operating Software//striker_gen//"
+        with open(path + 'sql_access.txt', 'r') as file:
             access = file.readlines()
         
         jobpresent = True #boolean initialization

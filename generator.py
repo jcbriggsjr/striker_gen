@@ -31,7 +31,7 @@ machines = { 'Bruce':{'s1p1':[-16.359,-7.875],'s2p1':[-10.816,-7.877],'s3p1':[-5
                          's1p2':[-16.326,-7.865],'s2p2':[-10.833,-7.866], 's3p2':[-5.339,-7.870],
                         'table_z':6.459},
             'LittleBro':{'s2p1':[0,0],'s1p1':[0,0],'s3p1':[0,0]}}
-path = ''
+path = 'G://3 - Production Departments//4 - Grinding//0 - Department Documents//4 - Programs & Software//1 - Operating Software//striker_gen//'
 backleft = path + 'glass_probe_backleft_template.txt'
 backright = path + 'glass_probe_backright_template.txt'
 frontleft = path + 'glass_probe_frontleft_template.txt'
@@ -135,7 +135,7 @@ def createPalletStrike(cust_name, cust_part_num, jobnum, pallet_number, stations
     # add probe code in beginning.
     half_X_dim = X_dim/2
     half_Y_dim = Y_dim/2
-    striking = addStrikeProbing(half_X_dim, half_Y_dim, machine, pallet_number, stations, orientation) + '\nM404\n' + striking + '\nM30\n'
+    striking = addStrikeProbing(half_X_dim, half_Y_dim, machine, pallet_number, stations, orientation) + '\nM404\n' + striking + '\nM9\nM30\n'
     striking = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' STRIKING)\n' + striking
     with open(strike_prog_name,'w') as file:
         file.write(striking)
@@ -176,10 +176,10 @@ def stationStrike(machine, pallet_number, station_number, X_dim, Y_dim, offset_x
 def modifyStrikeBase(num_passes, path_len, station_number, X, Y, orientation):
     
     if orientation == 'Horizontal':
-        with open('strike_one_horizontal.txt', 'r') as file:
+        with open(path + 'strike_one_horizontal.txt', 'r') as file:
             code = file.read()        
     elif orientation == 'Vertical':
-        with open('strike_one_vertical.txt', 'r') as file:
+        with open(path + 'strike_one_vertical.txt', 'r') as file:
             code = file.read()        
         
     m_code = code
@@ -230,10 +230,10 @@ def addStrikeProbing(X_dim, Y_dim, machine, pallet_number, stations, orientation
     # with the exception of travel direction and z probe
     # position assignment
     if orientation == 'Horizontal':        
-        with open('strikeprobe_y_template.txt', 'r') as file1:
+        with open(path + 'strikeprobe_y_template.txt', 'r') as file1:
             templatexy = file1.read()
     else:
-        with open('strikeprobe_x_template.txt', 'r') as file1:
+        with open(path + 'strikeprobe_x_template.txt', 'r') as file1:
             templatexy = file1.read()
     # strikeprobe_xy only needs to be called once for a given
     # fixture setup. All fixtures on the same setup
@@ -244,7 +244,7 @@ def addStrikeProbing(X_dim, Y_dim, machine, pallet_number, stations, orientation
     strikeprobe_z = ''
     # for each station in the setup, probe the z height of the rubber
     for s in s_list:
-        strikeprobe_z = strikeprobe_z + modify_z_code(s)
+        strikeprobe_z = strikeprobe_z + modify_z_code(s,xy_data)
     # need to put all the code together and add M30 to end it
     
     strikeprobe_code = strikeprobe_xy + strikeprobe_z
@@ -270,14 +270,16 @@ def modify_xy_code(templatexy,xy_data):
     
     return strikeprobe_xy        
 
-def modify_z_code(s):
+def modify_z_code(s,xy_data):
     # the only modification to the z template is the station number entry. 
     # the rest of the data needed is obtained and set by the xy template
     # and stored in the machine at runtime
-    with open('strikeprobe_z_template.txt', 'r') as file:
+    with open(path + 'strikeprobe_z_template.txt', 'r') as file:
         template_z = file.read()
         
     strikeprobe_z = template_z.replace("#104 = 10", "#104 = 1" + str(s))
+    strikeprobe_z = template_z.replace("#529 = 0", "#529 = " + str(xy_data[0]))
+    strikeprobe_z = template_z.replace("#530 = 0", "#530 = " + str(xy_data[1]))
     return strikeprobe_z
 
 
@@ -385,7 +387,7 @@ def getPartData(selections):
     
     
     # read sql database login info from file 
-    with open('sql_access.txt', 'r') as file:
+    with open(path + 'sql_access.txt', 'r') as file:
         access = file.readlines()    
 
     # create db connection
