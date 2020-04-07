@@ -119,7 +119,7 @@ def create_strike_probe(selections):
 def createPalletStrike(cust_name, cust_part_num, jobnum, pallet_number, stations, machine, X_dim, Y_dim, offset_x, offset_y, orientation):
     
     created = ''
-    striking = ''    
+    striking = ''        
     if all(station == False for station in stations):
         # no stations selected.
         print('no stations selected')
@@ -135,7 +135,7 @@ def createPalletStrike(cust_name, cust_part_num, jobnum, pallet_number, stations
     # add probe code in beginning.
     half_X_dim = X_dim/2
     half_Y_dim = Y_dim/2
-    striking = addStrikeProbing(half_X_dim, half_Y_dim, machine, pallet_number, stations, orientation) + '\nM404\n' + striking + '\nM9\nM30\n'
+    striking = addStrikeProbing(half_X_dim, half_Y_dim, machine, pallet_number, stations, orientation) + '\nM405\n' + striking + '\nM9\nM30\n'
     striking = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' STRIKING)\n' + striking
     with open(strike_prog_name,'w') as file:
         file.write(striking)
@@ -198,7 +198,8 @@ def modifyStrikeBase(num_passes, path_len, station_number, X, Y, orientation):
     m_code = m_code.replace('#100 = 0', passes)
     # insert x path 
     m_code = m_code.replace('#501 = 0', path_len)
-    
+    # insert N number based on station #
+    m_code = m_code.replace("N000", "N" + str(station_number))
     return m_code
 
 def addStrikeProbing(X_dim, Y_dim, machine, pallet_number, stations, orientation):       
@@ -293,7 +294,7 @@ def createPalletProbe(cust_name, cust_part_num, jobnum, palnum, stations, machin
     probe_list = [createStationProbe(palnum, station_number, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner) for station_number,station in enumerate(stations, start=1) if station]
     for partial in probe_list:
         probing_program = probing_program + partial
-    probing_program = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' PROBING)\n'+ 'G100 T99\nM404\n' + probing_program + '\nM404\nM30\n'
+    probing_program = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' PROBING)\n'+ 'G100 T99\nM404\n' + probing_program + '\nM405\nM30\n'
     saveProbingProgram(jobnum, palnum, probing_program)
     
 def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner):
