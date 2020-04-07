@@ -135,7 +135,9 @@ def createPalletStrike(cust_name, cust_part_num, jobnum, pallet_number, stations
     # add probe code in beginning.
     half_X_dim = X_dim/2
     half_Y_dim = Y_dim/2
-    striking = addStrikeProbing(half_X_dim, half_Y_dim, machine, pallet_number, stations, orientation) + '\nM405\n' + striking + '\nM9\nM30\n'
+    striking = addStrikeProbing(half_X_dim, half_Y_dim, machine, pallet_number, stations, orientation) + '\nM405\n' + striking
+    striking = striking + '\nM9\nG54.1 P48\nG0 G49 X0 Y0 Z25.3937\nM30\n'
+    
     striking = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' STRIKING)\n' + striking
     with open(strike_prog_name,'w') as file:
         file.write(striking)
