@@ -135,7 +135,7 @@ def createPalletStrike(cust_name, cust_part_num, jobnum, pallet_number, stations
     # add probe code in beginning.
     half_X_dim = X_dim/2
     half_Y_dim = Y_dim/2
-    striking = addStrikeProbing(half_X_dim, half_Y_dim, machine, pallet_number, stations, orientation) + '\nM404\n' + striking
+    striking = addStrikeProbing(half_X_dim, half_Y_dim, machine, pallet_number, stations, orientation) + '\nM405\nG54.1 P48\nG1 G49 X0 Y0 Z25.3937 F500.\nM404\n' + striking
     striking = striking + '\nM9\nG54.1 P48\nG0 G49 X0 Y0 Z25.3937\nM30\n'
     
     striking = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' STRIKING)\n' + striking
@@ -286,7 +286,7 @@ def modify_z_code(s,vac_x,vac_y):
     strikeprobe_z = template_z
     strikeprobe_z = strikeprobe_z.replace("#104 = 0", "#104 = 1" + str(s))
     strikeprobe_z = strikeprobe_z.replace("#529 = 0", "#529 = " + str(vac_x))
-    strikeprobe_z = strikeprobe_z.replace("#530 = 0", "#530 = " + str(vac_y))    
+    strikeprobe_z = strikeprobe_z.replace("#530 = 0", "#530 = " + str(vac_y))
     return strikeprobe_z
 
 
@@ -296,7 +296,7 @@ def createPalletProbe(cust_name, cust_part_num, jobnum, palnum, stations, machin
     probe_list = [createStationProbe(palnum, station_number, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner) for station_number,station in enumerate(stations, start=1) if station]
     for partial in probe_list:
         probing_program = probing_program + partial
-    probing_program = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' PROBING)\n'+ 'G100 T99\nM404\n' + probing_program + '\nM404\nG54.1 P48\nG1 G49 X0 Y0 Z25.3937 F500.\nM30\n'
+    probing_program = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' PROBING)\n'+ 'G100 T99\nM404\n' + probing_program + '\nM405\nG54.1 P48\nG1 G49 X0 Y0 Z25.3937 F500.\nM404\nM30\n'
     saveProbingProgram(jobnum, palnum, probing_program)
     
 def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner):
