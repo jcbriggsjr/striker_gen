@@ -9,6 +9,7 @@ import sys
 import generator
 import pyodbc
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
+import re
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -17,7 +18,10 @@ class MainWindow(QtWidgets.QMainWindow):
         super().__init__()
         path = "G://3 - Production Departments//4 - Grinding//0 - Department Documents//4 - Programs & Software//1 - Operating Software//striker_gen//"
         uic.loadUi(path + "Probe_UI.ui", self)
-        
+        self.pallet_1_checkbox.setChecked(True)
+        self.pallet_2_checkbox.setChecked(True)
+        self.x_offset_entry_box.setText("0.0")
+        self.y_offset_entry_box.setText("0.0")
         self.striking_pushbutton.clicked.connect(self.createStriking)        
         self.probing_pushbutton.clicked.connect(self.createProbing)        
     
@@ -74,7 +78,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def getProbeXYOffset(self):
         #retrieve manual x and y offset for probe point
         probe_x_offset = str(self.x_offset_entry_box.toPlainText())
-        probe_y_offset = str(self.y_offset_entry_box.toPlainText())
+        probe_y_offset = str(self.y_offset_entry_box.toPlainText())     
+        
         return [probe_x_offset, probe_y_offset]
     
     def getSkewCheck(self):
@@ -108,6 +113,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if report[1] != 'None':
             self.showDialog(report)
             generator.create_strike_probe(selections)
+            self.reset_defaults()
         pass
     
     def checkJob(self, jobnum):
@@ -152,6 +158,10 @@ class MainWindow(QtWidgets.QMainWindow):
         msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
         
         returnValue = msgBox.exec()
+    
+    def reset_defaults(self):
+        self.x_offset_entry_box.setText("0.0")
+        self.y_offset_entry_box.setText("0.0")
 
 if __name__ == '__main__':
     

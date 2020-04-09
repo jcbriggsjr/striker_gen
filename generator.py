@@ -309,10 +309,7 @@ def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_
     glasscorner.append(round(wcs[0] + mod_X_dim,3))
     glasscorner.append(round(wcs[1] + mod_Y_dim,3))
     
-    if man_x == '':
-        man_x = '0'
-    if man_y == '':
-        man_y = '0'
+    
     x_start = round(glasscorner[0] + offset_x,3)
     y_start = round(glasscorner[1] + offset_y,3)
     
@@ -334,7 +331,7 @@ def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_
     # set station vacuum wcx z
     template = template.replace("#531 = 0", "#531 = " + str(wcs[2]))
     # set manual entry x offset
-    template = template.replace("#642 = 0", "#642 = " + man_x)
+    template = template.replace("#642 = 0", "#642 = " + man_x)    
     # set manual entry y offset
     template = template.replace("#643 = 0", "#643 = " + man_y)
     # set theoretical glass corner x
