@@ -153,18 +153,19 @@ def stationStrike(machine, pallet_number, station_number, X_dim, Y_dim, offset_x
     wcs = machines[machine][wcs_string]
     # X and Y are adjustments to WCS center point to use as start for striking tool    
     if orientation == 'Horizontal':
-        path_len = X_dim + 3.5
+        path_len = round(X_dim + 3.5,3)
         num_passes = ceil(Y_dim/2.0)
     else:
         # the modifications below are useful in changing striking direction
         offset_x = 0
         offset_y = 1.75
-        path_len = -1*(Y_dim + 3.5)
+        path_len = round(-1*(Y_dim + 3.5),3)
         num_passes = ceil(X_dim/2.0)
+    
     #X should be negative as an adjustment to WCS. Statement valid for striking only
-    X = (-1*X_dim/2) - offset_x
+    X = round((-1*X_dim/2) - offset_x,3)
     #Y should be positive as an adjustment to WCS. Statement valid for striking only
-    Y = (Y_dim/2) + offset_y        
+    Y = round((Y_dim/2) + offset_y,3)
     
     # wcs_modified is ready to be used as X,Y to get base code
     wcs_modified = [round(wcs[0]+X,3),round(wcs[1]+Y,3)]    
