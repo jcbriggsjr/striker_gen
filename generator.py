@@ -421,4 +421,5 @@ def getPartData(selections):
 
 
 if __name__ == "__main__":    
-    print('hi')
+    a,b,c,d,e,f = getPartData(('94319',0))
+    print(a,b,c,d,e,f)
