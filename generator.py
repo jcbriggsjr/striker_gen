@@ -64,9 +64,10 @@ def create_strike_probe(selections):
     length, width, diameter, glass_thick, cust_name, cust_part_num = getPartData(selections)
     
     # data imported as strings, need to be floats
-    length = float(length)
-    width = float(width)
-    diameter = float(diameter)
+    max_oversize = 0.120
+    length = float(length) + max_oversize
+    width = float(width) + max_oversize
+    diameter = float(diameter) + max_oversize
     glass_thick = float(glass_thick)
     
     # there are some data where width is longest dimension, need to swap
@@ -402,7 +403,7 @@ def getPartData(selections):
                       'Trusted_Connect=yes;')
     
     # query db for blank length, width, diameter and store in "data" dataframe
-    data = pd.read_sql_query("SELECT Jobs.IdealBlankLength1, Jobs.IdealBlankWidth1, "
+    data = pd.read_sql_query("SELECT Jobs.PartSizeLengthMid, Jobs.PartSizeWidthMid, "
                              "Jobs.PartSizeDiameterMid, Jobs.MaterialThickness "
                              "FROM QssCatiJobTrack.dbo.Jobs "
                              "WHERE Jobs.JobNum = " + jobnum, conn)
