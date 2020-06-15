@@ -113,7 +113,7 @@ def create_strike_probe(selections):
             
         elif s_or_p == 'Probing':
             offset_x, offset_y = modifyOffsets(probe_corner)
-            createPalletProbe(cust_name, cust_part_num, jobnum, palnum, stations, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner)
+            createPalletProbe(cust_name, cust_part_num, jobnum, palnum, stations, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner,orientation)
     #return 'Success'    
     
         
@@ -293,12 +293,12 @@ def modify_z_code(s,vac_x,vac_y):
 
 
     
-def createPalletProbe(cust_name, cust_part_num, jobnum, palnum, stations, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner):
+def createPalletProbe(cust_name, cust_part_num, jobnum, palnum, stations, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner,orientation):
     probing_program = ''
     probe_list = [createStationProbe(palnum, station_number, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner) for station_number,station in enumerate(stations, start=1) if station]
     for partial in probe_list:
         probing_program = probing_program + partial
-    probing_program = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' PROBING)\n'+ 'G100 T99\nM404\n' + probing_program + '\nM405\nG54.1 P48\nG1 G49 X0 Y0 Z25.3937 F500.\nM30\n'
+    probing_program = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' PROBING)\n'+ 'G100 T99\nM404\n(' + orientation.upper() + ')\n' + probing_program + '\nM405\nG54.1 P48\nG1 G49 X0 Y0 Z25.3937 F500.\nM30\n'
     saveProbingProgram(jobnum, palnum, probing_program)
     
 def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner):
