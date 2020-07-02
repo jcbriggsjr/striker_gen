@@ -127,7 +127,8 @@ def createPalletStrike(cust_name, cust_part_num, jobnum, pallet_number, stations
         # return 'No station selected.'
     else:
         created = [created + stationStrike(machine, pallet_number, station_number, X_dim, Y_dim, offset_x, offset_y, orientation) for station_number, station in enumerate(stations) if station]
-        strike_prog_name = str(jobnum) + '_pallet_' + str(pallet_number) + '_strike.nc'
+        save_path = 'G://3 - Production Departments//4 - Grinding//9 - VMCs//4 - Programs & Software//10-Programs_and_Tools_to_Transfer//' + str(machine) + '//Striking//'
+        strike_prog_name = save_path + str(jobnum) + '_pallet_' + str(pallet_number) + '_strike.nc'
     
     for each in created:
         striking += each
@@ -299,7 +300,7 @@ def createPalletProbe(cust_name, cust_part_num, jobnum, palnum, stations, machin
     for partial in probe_list:
         probing_program = probing_program + partial
     probing_program = '(' + cust_name.upper() + ' ' + cust_part_num.upper() + ' PROBING)\n'+ 'G100 T99\nM404\n(' + orientation.upper() + ')\n' + probing_program + '\nM405\nG54.1 P48\nG1 G49 X0 Y0 Z25.3937 F500.\nM30\n'
-    saveProbingProgram(jobnum, palnum, probing_program)
+    saveProbingProgram(machine, jobnum, palnum, probing_program)
     
 def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_dim, offset_x, offset_y,probepath, man_x, man_y, glass_thick,skew_check,probe_corner):
     sp = 's' + str(station_number) + 'p' + str(pallet_number)
@@ -379,8 +380,9 @@ def setGlassCorner(X_dim, Y_dim, probe_corner):
     probepath = direction[probe_corner][2]
     return mod_X_dim, mod_Y_dim, probepath
 
-def saveProbingProgram(job_number, pallet_number, probing_program):
-    prog_name = str(job_number) + '_pallet_' + str(pallet_number) + '_probe.nc'
+def saveProbingProgram(machine, job_number, pallet_number, probing_program):
+    save_path = 'G://3 - Production Departments//4 - Grinding//9 - VMCs//4 - Programs & Software//10-Programs_and_Tools_to_Transfer//' + str(machine) + '//Probing//'
+    prog_name = save_path + str(job_number) + '_pallet_' + str(pallet_number) + '_probe.nc'
     with open(prog_name,'w') as file:
         file.write(probing_program)
     

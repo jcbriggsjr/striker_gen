@@ -29,6 +29,7 @@ n = 26 Station 3 Pallet 2 Vacuum Hole Center and Table Height WCS
 #106 tracks whether striking program has probed Z already for pallet 2
 #107 sets number of Z passes
 #108 tracks number of Z passes from striker
+#109 sets Z drop modifier
 
 #500 tracks pass position for passes in XY plane
 #501 sets pass length in XY plane
