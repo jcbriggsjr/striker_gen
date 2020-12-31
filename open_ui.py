@@ -8,8 +8,9 @@ Created on Tue Mar 17 08:49:27 2020
 import sys
 import generator
 import pyodbc
+import pandas as pd
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
-import re
+
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -17,16 +18,18 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         path = "G://3 - Production Departments//4 - Grinding//0 - Department Documents//4 - Programs & Software//1 - Operating Software//striker_gen//"
-        uic.loadUi(path + "Probe_UI.ui", self)
+        uic.loadUi(path + "Probe_UI.ui", self)        
         self.pallet_1_checkbox.setChecked(True)
         self.pallet_2_checkbox.setChecked(True)
         self.x_offset_entry_box.setText("0.0")
-        self.y_offset_entry_box.setText("0.0")
+        self.y_offset_entry_box.setText("0.0")     
+        self.blank_length_entry_box.setText("0.0")
+        self.blank_width_entry_box.setText("0.0")
         self.striking_pushbutton.clicked.connect(self.createStriking)        
         self.probing_pushbutton.clicked.connect(self.createProbing)        
     
     def getSelections(self):
-        job = self.getJob()
+        job = self.getJob()        
         machine = self.getMachine()
         pallets = self.getPallets()
         stations = self.getStations()
@@ -34,7 +37,8 @@ class MainWindow(QtWidgets.QMainWindow):
         probepoint = self.getProbePoint()
         xy_offsets = self.getProbeXYOffset()
         skew_check = self.getSkewCheck()
-        data_list = [job, machine, pallets, stations, orientation, probepoint,xy_offsets,skew_check]
+        length, width = self.getBlankSize()
+        data_list = [job, machine, pallets, stations, orientation, probepoint,xy_offsets,skew_check,length,width]
         return data_list
     
     def getJob(self):
@@ -87,6 +91,12 @@ class MainWindow(QtWidgets.QMainWindow):
         skew_check = self.skew_check_box.isChecked()
         return skew_check
     
+    def getBlankSize(self):
+        # retrieve entered blank size
+        length = float(self.blank_length_entry_box.toPlainText())
+        width = float(self.blank_width_entry_box.toPlainText())
+        return length, width
+    
     def createStriking(self):
         # action to take when Create Striking button is pressed
         selections = self.getSelections()
@@ -95,6 +105,8 @@ class MainWindow(QtWidgets.QMainWindow):
         report = ['createStriking']
         for e in selections:
             report.append(e)
+        
+        report = self.checkBlankSize(report)
         
         if report[1] != 'None':
             self.showDialog(report)
@@ -108,7 +120,9 @@ class MainWindow(QtWidgets.QMainWindow):
         
         report = ['createProbing']
         for e in selections:
-            report.append(e)            
+            report.append(e)
+            
+        report = self.checkBlankSize(report)
         
         if report[1] != 'None':
             self.showDialog(report)
@@ -146,11 +160,53 @@ class MainWindow(QtWidgets.QMainWindow):
         conn.close()    
         return jobpresent
     
+    def checkBlankSize(self, report):
+        if report[1] == 'None':
+            return report
+        jobnum = "'" + report[1].upper() + "'"
+        path = "G://3 - Production Departments//4 - Grinding//0 - Department Documents//4 - Programs & Software//1 - Operating Software//striker_gen//"
+        with open(path + 'sql_access.txt', 'r') as file:
+            access = file.readlines()
+            
+        length = 0
+        width = 0
+        diameter = 0
+        
+        conn = pyodbc.connect('Driver={SQL Server};'
+                              'Server=SVR-APP\\SQLEXPRESS;'
+                              + access[0] +
+                              'Trusted_Connect=yes;')
+        cursor = conn.cursor()
+        
+        data = pd.read_sql_query("SELECT Jobs.PartSizeLengthMid, Jobs.PartSizeWidthMid, "
+                                 "Jobs.PartSizeDiameterMid "
+                                 "FROM QssCatiJobTrack.dbo.Jobs "
+                                 "WHERE Jobs.JobNum = " + jobnum, conn)
+        
+        conn.close()
+        
+        length = float(data.iloc[0][0]) + 0.08
+        width = float(data.iloc[0][1]) + 0.08
+        diameter = float(data.iloc[0][2]) + 0.08
+                                                                
+        if length == 0.08 or width == 0.08 and diameter > 0.08:
+            length, width = diameter, diameter
+        
+        if length != report[9] or width != report[10]:            
+            modified_report = report
+            modified_report[0] = report[0] + ' verifyblank'            
+        else:
+            return report
+        
+        return modified_report
+    
     def showDialog(self,report):
         key = report[0]        
         reports = {'getJob': 'Job # ' + report[1] + ' not found.',
                    'createStriking': 'Striking created for job # ' + report[1] + ' on ' + report[2] + '.',
-                   'createProbing': 'Probing created for job # ' +report[1] + ' on ' + report[2] + '.'}
+                   'createStriking verifyblank': 'Striking created for job # ' + report[1] + ' on ' + report[2] + '.\r\n Verify blank size.',
+                   'createProbing': 'Probing created for job # ' +report[1] + ' on ' + report[2] + '.',
+                   'createProbing verifyblank': 'Probing created for job # ' +report[1] + ' on ' + report[2] + '.\r\n Verify blank size.'}
         msgBox = QtWidgets.QMessageBox()
         msgBox.setIcon(QtWidgets.QMessageBox.Information)
         msgBox.setText(reports[key])

@@ -30,7 +30,11 @@ machines = { 'Bruce':{'s1p1':[-16.359,-7.875],'s2p1':[-10.816,-7.877],'s3p1':[-5
             'VanDamme':{ 's1p1':[-16.314,-7.873],'s2p1':[-10.827,-7.871], 's3p1':[-5.324,-7.8595],
                          's1p2':[-16.326,-7.865],'s2p2':[-10.833,-7.866], 's3p2':[-5.339,-7.870],
                         'table_z':6.459},
+            'Dutch':{'s1p1':[-16.327,-7.567],'s2p1':[-10.827,-7.567],'s3p1':[-5.327,-7.567],
+                     's1p2':[-16.327,-7.567],'s2p2':[-10.827,-7.567],'s3p2':[-5.327,-7.567],
+                     'table_z':6.459},
             'LittleBro':{'s2p1':[0,0],'s1p1':[0,0],'s3p1':[0,0]}}
+
 path = 'G://3 - Production Departments//4 - Grinding//0 - Department Documents//4 - Programs & Software//1 - Operating Software//striker_gen//'
 backleft = path + 'glass_probe_backleft_template.txt'
 backright = path + 'glass_probe_backright_template.txt'
@@ -60,20 +64,18 @@ def whichPallet(pallet1, pallet2):
         return ['None']
     
 def create_strike_probe(selections):
-    # get and set length, width, diameter for the job
-    length, width, diameter, glass_thick, cust_name, cust_part_num = getPartData(selections)
+    # get glass thickness and customer data for job
+    glass_thick, cust_name, cust_part_num = getPartData(selections)
     
-    # data imported as strings, need to be floats
-    max_oversize = 0.120
-    length = float(length) + max_oversize
-    width = float(width) + max_oversize
-    diameter = float(diameter) + max_oversize
+    # set glass dimensions    
+    length = selections[8]
+    width = selections[9]    
     glass_thick = float(glass_thick)
     
     # there are some data where width is longest dimension, need to swap
     if width > length:
-        length, width = width, length
-            
+        length, width = width, length  
+    
     # initialize vars
     
     offset_x = 1.75
@@ -88,7 +90,7 @@ def create_strike_probe(selections):
     orientation = selections[4]
     probe_corner = selections[5]
     skew_check = [selections[7],orientation]
-    s_or_p = selections[8]
+    s_or_p = selections[10]
     man_x = selections[6][0]
     man_y = selections[6][1]
     pallet = '1'
@@ -405,8 +407,7 @@ def getPartData(selections):
                       'Trusted_Connect=yes;')
     
     # query db for blank length, width, diameter and store in "data" dataframe
-    data = pd.read_sql_query("SELECT Jobs.PartSizeLengthMid, Jobs.PartSizeWidthMid, "
-                             "Jobs.PartSizeDiameterMid, Jobs.MaterialThickness "
+    data = pd.read_sql_query("SELECT Jobs.MaterialThickness "
                              "FROM QssCatiJobTrack.dbo.Jobs "
                              "WHERE Jobs.JobNum = " + jobnum, conn)
     
@@ -419,10 +420,10 @@ def getPartData(selections):
     
     conn.close()
     
-    # return length, width, diameterMid, customer name, customer part number as strings
-    return data.iloc[0][0], data.iloc[0][1], data.iloc[0][2], data.iloc[0][3], cust_data.iloc[0][0], cust_data.iloc[0][1]
+    # return glass thickness, customer name, customer part number as strings
+    return data.iloc[0][0], cust_data.iloc[0][0], cust_data.iloc[0][1]
 
 
 if __name__ == "__main__":    
-    a,b,c,d,e,f = getPartData(('94319',0))
+    a,b,c,d,e,f = getPartData(('95253A',0))
     print(a,b,c,d,e,f)
