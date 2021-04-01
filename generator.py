@@ -27,12 +27,12 @@ machines = { 'Bruce':{'s1p1':[-16.359,-7.875],'s2p1':[-10.816,-7.877],'s3p1':[-5
             'Chuck':{'s1p1':[-16.34,-7.87],'s2p1':[-10.837,-7.872],'s3p1':[-5.33,-7.86],
                      's1p2':[-16.339,-7.87],'s2p2':[-10.842,-7.875],'s3p2':[-5.342,-7.872],
                      'table_z':5.459},
-            'VanDamme':{ 's1p1':[-16.314,-7.873],'s2p1':[-10.827,-7.871], 's3p1':[-5.324,-7.8595],
-                         's1p2':[-16.326,-7.865],'s2p2':[-10.833,-7.866], 's3p2':[-5.339,-7.870],
-                        'table_z':6.459},
+            'VanDamme':{ 's1p1':[-16.327,-7.614],'s2p1':[-10.827,-7.614], 's3p1':[-5.327,-7.614],
+                         's1p2':[-16.327,-7.614],'s2p2':[-10.827,-7.614], 's3p2':[-5.327,-7.614],
+                        'table_z':5.433},
             'Dutch':{'s1p1':[-16.327,-7.567],'s2p1':[-10.827,-7.567],'s3p1':[-5.327,-7.567],
                      's1p2':[-16.327,-7.567],'s2p2':[-10.827,-7.567],'s3p2':[-5.327,-7.567],
-                     'table_z':6.459},
+                     'table_z':5.503},
             'LittleBro':{'s2p1':[0,0],'s1p1':[0,0],'s3p1':[0,0]}}
 
 path = 'G://3 - Production Departments//4 - Grinding//0 - Department Documents//4 - Programs & Software//1 - Operating Software//striker_gen//'
@@ -308,7 +308,8 @@ def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_
     sp = 's' + str(station_number) + 'p' + str(pallet_number)
     st_num = station_number + (int(pallet_number)-1)*3
     wcs = machines[machine][sp]
-    wcs.append(machines[machine]['table_z'])
+    table_z = machines[machine]['table_z']
+    wcs.append(table_z)
     # set glasscorner to store theoretical glass corner coordinates
     glasscorner = []    
     glasscorner.append(round(wcs[0] + mod_X_dim,3))
@@ -318,7 +319,7 @@ def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_
     x_start = round(glasscorner[0] + offset_x,3)
     y_start = round(glasscorner[1] + offset_y,3)
     
-    rubber_height_var = str(7003 + ((st_num+9)*20))
+    rubber_height_var = str(float(table_z) + 0.77) # set based off adding 0.77" to table Z height
     glass_thick = glass_thick / 25.4
     half_glass_thick = round(glass_thick / 2.0,3)
     
@@ -349,7 +350,7 @@ def createStationProbe(pallet_number, station_number, machine, mod_X_dim, mod_Y_
     template = template.replace("#638 = 0", "#638 = " + str(y_start))
     
     # set minimum probe Z limit for glass top, height of fixture
-    template = template.replace("#625 = #0", "#625 = #" + rubber_height_var)
+    template = template.replace("#625 = #0", "#625 = " + rubber_height_var)
     # set half glass thickness
     template = template.replace("#644 = 0","#644 = " + str(half_glass_thick))
     
